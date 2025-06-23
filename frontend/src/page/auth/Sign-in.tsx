@@ -63,13 +63,18 @@ const SignIn = () => {
         const decodedUrl = returnUrl ? decodeURIComponent(returnUrl) : null;
         navigate(decodedUrl || `/workspace/${user.currentWorkspace}`);
       },
-      onError: (error) => {
+      onError: (error: any) => {
+        const message =
+          error?.response?.data?.message ||
+          error?.message ||
+          "Something went wrong. Please try again.";
+
         toast({
           title: "Error",
-          description: error.message,
+          description: message,
           variant: "destructive",
         });
-      },
+      }
     });
   };
 
