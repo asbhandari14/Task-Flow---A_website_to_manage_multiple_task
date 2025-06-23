@@ -20,6 +20,11 @@ import workspaceRoutes from './routes/workspace.route.js';
 const PORT = process.env.PORT || 5000;
 const app = express();
 
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+
 app.use(
   cors({
     origin: process.env.FRONTEND_ORIGIN,
@@ -32,8 +37,6 @@ app.use(
 app.options("*", cors());
 
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 
