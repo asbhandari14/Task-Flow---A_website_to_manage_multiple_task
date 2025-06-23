@@ -64,10 +64,14 @@ const SignIn = () => {
         navigate(decodedUrl || `/workspace/${user.currentWorkspace}`);
       },
       onError: (error: any) => {
-        const message =
-          error?.response?.data?.message ||
-          error?.message ||
-          "Something went wrong. Please try again.";
+        let message = "Something went wrong. Please try again.";
+        if (error) {
+          if (error.response && error.response.data && error.response.data.message) {
+            message = error.response.data.message;
+          } else if (error.message) {
+            message = error.message;
+          }
+        }
 
         toast({
           title: "Error",
