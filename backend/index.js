@@ -24,6 +24,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+console.log(process.env.FRONTEND_ORIGIN)
 
 app.use(
   cors({

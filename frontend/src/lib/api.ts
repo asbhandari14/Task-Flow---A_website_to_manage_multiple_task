@@ -29,10 +29,40 @@ import {
 export const loginMutationFn = async (
   data: loginType
 ): Promise<LoginResponseType> => {
-  const response = await API.post("/auth/login", data, {withCredentials: true, headers : {"Content-Type" : "application/json"}});
-  // console.log("this is the value of the response of the login", response);
-  return response.data;
+  try {
+    const response = await API.post("/auth/login", data, {
+      withCredentials: true, 
+      headers: {"Content-Type": "application/json"}
+    });
+    
+    // Add logging to see what's happening
+    console.log("Login response status:", response?.status);
+    console.log("Login response data:", response?.data);
+    
+    // Check if response and response.data exist
+    if (!response || !response.data) {
+      throw new Error("Invalid response from login API");
+    }
+    
+    return response.data;
+  } catch (error:any) {
+    console.error("Login API error:", error);
+    
+    // Log more details about the error
+    if (error?.response) {
+      console.error("Error response:", error?.response.status, error.response.data);
+    } else if (error.request) {
+      console.error("No response received:", error.request);
+    } else {
+      console.error("Request setup error:", error.message);
+    }
+    
+    // Re-throw the error so your calling code can handle it
+    throw error;
+  }
 };
+
+
 
 export const registerMutationFn = async (data: registerType) =>
   await API.post("/auth/register", data, {withCredentials: true, headers : {"Content-Type" : "application/json"}});
