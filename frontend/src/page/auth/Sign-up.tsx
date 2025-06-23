@@ -29,6 +29,8 @@ import { Loader } from "lucide-react";
 const SignUp = () => {
   const navigate = useNavigate();
 
+
+
   const { mutate, isPending } = useMutation({
     mutationFn: registerMutationFn,
   });
@@ -43,6 +45,8 @@ const SignUp = () => {
       message: "Password is required",
     }),
   });
+
+
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -70,6 +74,9 @@ const SignUp = () => {
     });
   };
 
+
+
+  
   return (
     <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-muted p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">

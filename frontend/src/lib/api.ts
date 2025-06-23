@@ -29,17 +29,19 @@ import {
 export const loginMutationFn = async (
   data: loginType
 ): Promise<LoginResponseType> => {
-  const response = await API.post("/auth/login", data);
+  const response = await API.post("/auth/login", data, {withCredentials: true, headers : {"Content-Type" : "application/json"}});
   // console.log("this is the value of the response of the login", response);
   return response.data;
 };
 
 export const registerMutationFn = async (data: registerType) =>
-  await API.post("/auth/register", data);
+  await API.post("/auth/register", data, {withCredentials: true, headers : {"Content-Type" : "application/json"}});
+
+
 
 export const logoutMutationFn = async () =>{
   try {
-    const response = await API.get("/auth/logout");
+    const response = await API.get("/auth/logout", {withCredentials: true});
     console.log("This is the value of the response of the logout api ")
     return response.data
   } catch (error) {
@@ -50,7 +52,7 @@ export const logoutMutationFn = async () =>{
 
 export const getCurrentUserQueryFn =
   async (): Promise<CurrentUserResponseType> => {
-    const response = await API.get(`/user/current`);
+    const response = await API.get(`/user/current`, {withCredentials: true, headers : {"Content-Type" : "application/json"}});
     return response.data;
   };
 
@@ -60,7 +62,7 @@ export const getCurrentUserQueryFn =
 export const createWorkspaceMutationFn = async (
   data: CreateWorkspaceType
 ): Promise<CreateWorkspaceResponseType> => {
-  const response = await API.post(`/workspace/create/new`, data);
+  const response = await API.post(`/workspace/create/new`, data, {withCredentials: true, headers : {"Content-Type" : "application/json"}});
   return response.data;
 };
 
@@ -68,34 +70,34 @@ export const editWorkspaceMutationFn = async ({
   workspaceId,
   data,
 }: EditWorkspaceType) => {
-  const response = await API.put(`/workspace/update/${workspaceId}`, data);
+  const response = await API.put(`/workspace/update/${workspaceId}`, data, {withCredentials: true, headers : {"Content-Type" : "application/json"}});
   return response.data;
 };
 
 export const getAllWorkspacesUserIsMemberQueryFn =
   async (): Promise<AllWorkspaceResponseType> => {
-    const response = await API.get(`/workspace/all`);
+    const response = await API.get(`/workspace/all`, {withCredentials: true, headers : {"Content-Type" : "application/json"}});
     return response.data;
   };
 
 export const getWorkspaceByIdQueryFn = async (
   workspaceId: string
 ): Promise<WorkspaceByIdResponseType> => {
-  const response = await API.get(`/workspace/${workspaceId}`);
+  const response = await API.get(`/workspace/${workspaceId}`, {withCredentials: true, headers : {"Content-Type" : "application/json"}});
   return response.data;
 };
 
 export const getMembersInWorkspaceQueryFn = async (
   workspaceId: string
 ): Promise<AllMembersInWorkspaceResponseType> => {
-  const response = await API.get(`/workspace/members/${workspaceId}`);
+  const response = await API.get(`/workspace/members/${workspaceId}`, {withCredentials: true, headers : {"Content-Type" : "application/json"}});
   return response.data;
 };
 
 export const getWorkspaceAnalyticsQueryFn = async (
   workspaceId: string
 ): Promise<AnalyticsResponseType> => {
-  const response = await API.get(`/workspace/analytics/${workspaceId}`);
+  const response = await API.get(`/workspace/analytics/${workspaceId}`, {withCredentials: true, headers : {"Content-Type" : "application/json"}});
   return response.data;
 };
 
@@ -105,7 +107,8 @@ export const changeWorkspaceMemberRoleMutationFn = async ({
 }: ChangeWorkspaceMemberRoleType) => {
   const response = await API.put(
     `/workspace/change/member/role/${workspaceId}`,
-    data
+    data, 
+    {withCredentials: true, headers : {"Content-Type" : "application/json"}}
   );
   return response.data;
 };
@@ -116,7 +119,7 @@ export const deleteWorkspaceMutationFn = async (
   message: string;
   currentWorkspace: string;
 }> => {
-  const response = await API.delete(`/workspace/delete/${workspaceId}`);
+  const response = await API.delete(`/workspace/delete/${workspaceId}`, {withCredentials: true, headers : {"Content-Type" : "application/json"}});
   return response.data;
 };
 
@@ -128,7 +131,7 @@ export const invitedUserJoinWorkspaceMutationFn = async (
   message: string;
   workspaceId: string;
 }> => {
-  const response = await API.post(`/member/workspace/${iniviteCode}/join`);
+  const response = await API.post(`/member/workspace/${iniviteCode}/join`, {withCredentials: true, headers : {"Content-Type" : "application/json"}});
   return response.data;
 };
 
@@ -140,7 +143,8 @@ export const createProjectMutationFn = async ({
 }: CreateProjectPayloadType): Promise<ProjectResponseType> => {
   const response = await API.post(
     `/project/workspace/${workspaceId}/create`,
-    data
+    data,
+    {withCredentials: true, headers : {"Content-Type" : "application/json"}}
   );
   return response.data;
 };
@@ -152,7 +156,8 @@ export const editProjectMutationFn = async ({
 }: EditProjectPayloadType): Promise<ProjectResponseType> => {
   const response = await API.put(
     `/project/${projectId}/workspace/${workspaceId}/update`,
-    data
+    data,
+    {withCredentials: true, headers : {"Content-Type" : "application/json"}}
   );
   return response.data;
 };
@@ -163,7 +168,8 @@ export const getProjectsInWorkspaceQueryFn = async ({
   pageNumber = 1,
 }: AllProjectPayloadType): Promise<AllProjectResponseType> => {
   const response = await API.get(
-    `/project/workspace/${workspaceId}/all?pageSize=${pageSize}&pageNumber=${pageNumber}`
+    `/project/workspace/${workspaceId}/all?pageSize=${pageSize}&pageNumber=${pageNumber}`,
+    {withCredentials: true, headers : {"Content-Type" : "application/json"}}
   );
   return response.data;
 };
@@ -173,7 +179,8 @@ export const getProjectByIdQueryFn = async ({
   projectId,
 }: ProjectByIdPayloadType): Promise<ProjectResponseType> => {
   const response = await API.get(
-    `/project/${projectId}/workspace/${workspaceId}`
+    `/project/${projectId}/workspace/${workspaceId}`,
+    {withCredentials: true, headers : {"Content-Type" : "application/json"}}
   );
   return response.data;
 };
@@ -183,7 +190,8 @@ export const getProjectAnalyticsQueryFn = async ({
   projectId,
 }: ProjectByIdPayloadType): Promise<AnalyticsResponseType> => {
   const response = await API.get(
-    `/project/${projectId}/workspace/${workspaceId}/analytics`
+    `/project/${projectId}/workspace/${workspaceId}/analytics`,
+    {withCredentials: true, headers : {"Content-Type" : "application/json"}}
   );
   return response.data;
 };
@@ -195,7 +203,8 @@ export const deleteProjectMutationFn = async ({
   message: string;
 }> => {
   const response = await API.delete(
-    `/project/${projectId}/workspace/${workspaceId}/delete`
+    `/project/${projectId}/workspace/${workspaceId}/delete`,
+        {withCredentials: true, headers : {"Content-Type" : "application/json"}}
   );
   return response.data;
 };
@@ -210,7 +219,8 @@ export const createTaskMutationFn = async ({
 }: CreateTaskPayloadType) => {
   const response = await API.post(
     `/task/project/${projectId}/workspace/${workspaceId}/create`,
-    data
+    data,
+        {withCredentials: true, headers : {"Content-Type" : "application/json"}}
   );
   return response.data;
 };
@@ -224,7 +234,8 @@ export const editTaskMutationFn = async ({
 }: EditTaskPayloadType): Promise<{message: string;}> => {
   const response = await API.put(
     `/task/${taskId}/project/${projectId}/workspace/${workspaceId}/update/`,
-    data
+    data,
+        {withCredentials: true, headers : {"Content-Type" : "application/json"}}
   );
   return response.data;
 };
@@ -253,7 +264,7 @@ export const getAllTasksQueryFn = async ({
   if (pageSize) queryParams.append("pageSize", pageSize?.toString());
 
   const url = queryParams.toString() ? `${baseUrl}?${queryParams}` : baseUrl;
-  const response = await API.get(url);
+  const response = await API.get(url,     {withCredentials: true, headers : {"Content-Type" : "application/json"}});
   return response.data;
 };
 
@@ -267,7 +278,8 @@ export const deleteTaskMutationFn = async ({
   message: string;
 }> => {
   const response = await API.delete(
-    `task/${taskId}/workspace/${workspaceId}/delete`
+    `task/${taskId}/workspace/${workspaceId}/delete`,
+        {withCredentials: true, headers : {"Content-Type" : "application/json"}}
   );
   return response.data;
 };
