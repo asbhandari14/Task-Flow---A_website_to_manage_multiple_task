@@ -57,17 +57,32 @@ const SignIn = () => {
     if (isPending) return;
 
     mutate(values, {
-      onSuccess: (data) => {
-        const user = data.user;
+      onSuccess: (data: any) => {
+        const user = data?.user;
         console.log("This is the value of the user from the Sign in component", user);
         const decodedUrl = returnUrl ? decodeURIComponent(returnUrl) : null;
-        navigate(decodedUrl || `/workspace/${user.currentWorkspace}`);
+        if (user && user.currentWorkspace) {
+          navigate(decodedUrl || `/workspace/${user.currentWorkspace}`);
+        } else {
+          toast({
+            title: "Error",
+            description: "User data is missing or incomplete.",
+            variant: "destructive",
+          });
+        }
       },
       onError: (error: any) => {
         let message = "Something went wrong. Please try again.";
         if (error) {
-          if (error.response && error.response.data && error.response.data.message) {
+          if (
+            error.response &&
+            error.response.data &&
+            typeof error.response.data === "object" &&
+            error.response.data.message
+          ) {
             message = error.response.data.message;
+          } else if (error.response && typeof error.response.data === "string") {
+            message = error.response.data;
           } else if (error.message) {
             message = error.message;
           }
