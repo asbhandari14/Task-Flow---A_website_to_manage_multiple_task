@@ -3,11 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDatabase from './database/db.config.js';
 import cookieParser from 'cookie-parser';
-
-
 dotenv.config();
-
-
 import authRoutes from './routes/auth.route.js';
 import memberRoutes from './routes/member.route.js';
 import projectRoutes from './routes/project.route.js';
@@ -17,15 +13,16 @@ import workspaceRoutes from './routes/workspace.route.js';
 
 
 
+
+
 const PORT = process.env.PORT || 5000;
+
 const app = express();
 
-
+// app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-console.log(process.env.FRONTEND_ORIGIN)
-
+app.use(cookieParser());
 app.use(
   cors({
     origin: process.env.FRONTEND_ORIGIN,
@@ -33,11 +30,6 @@ app.use(
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"]
   })
 );
-
-
-
-app.use(cookieParser());
-
 
 
 
