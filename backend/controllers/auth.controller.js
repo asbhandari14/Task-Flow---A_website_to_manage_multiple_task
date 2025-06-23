@@ -240,7 +240,7 @@ export const loginController = async (req, res, next) => {
       expires: new Date(Date.now() + 24 * 60 * 60 * 1000), // 1 day
       httpOnly: true,
       secure: process.env.NODE_ENV === "production" ? true : false, // Set to true in production
-      sameSite: "strict"
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     };
 
     

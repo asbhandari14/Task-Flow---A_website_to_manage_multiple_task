@@ -33,8 +33,6 @@ app.use(
   })
 );
 
-// ✅ Allow preflight globally
-app.options("*", cors());
 
 
 app.use(cookieParser());
