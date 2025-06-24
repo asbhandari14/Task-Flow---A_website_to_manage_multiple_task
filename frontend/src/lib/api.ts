@@ -34,10 +34,13 @@ export const loginMutationFn = async (
   data: loginType
 ): Promise<LoginResponseType> => {
   try {
-    const response = await API.post("/auth/login", data, {
+    // Try with credentials first
+    let requestConfig = {
       withCredentials: true, 
       headers: {"Content-Type": "application/json"}
-    });
+    };
+
+    const response = await API.post("/auth/login", data, requestConfig);
     
     // Add logging to see what's happening
     console.log("Login response status:", response?.status);
@@ -52,11 +55,37 @@ export const loginMutationFn = async (
   } catch (error: any) {
     console.error("Login API error:", error);
 
+    // Check if it's a CORS/credentials issue and retry without credentials
+    if (error && error.code === 'ERR_NETWORK' || 
+        (error.message && error.message.includes('CORS')) ||
+        (error.message && error.message.includes('credentials')) ||
+        (!error.response && !error.request)) {
+      
+      console.log("Retrying login without credentials due to CORS/network issue");
+      
+      try {
+        const retryResponse = await API.post("/auth/login", data, {
+          headers: {"Content-Type": "application/json"}
+          // withCredentials removed for retry
+        });
+        
+        if (!retryResponse || !retryResponse.data) {
+          throw new Error("Invalid response from login API on retry");
+        }
+        
+        return retryResponse.data;
+      } catch (retryError: any) {
+        console.error("Login retry also failed:", retryError);
+        // Continue with original error handling below
+        error = retryError;
+      }
+    }
+
     // Create a standardized error object
     const errorObj = {
       response: undefined as any,
       request: undefined as any,
-      message: "Unknown error"
+      message: "Login failed"
     };
 
     // Safely extract error information
@@ -75,7 +104,7 @@ export const loginMutationFn = async (
         errorObj.request = error.request;
       }
       
-      // Set message
+      // Set message with better error descriptions
       if (error.message) {
         errorObj.message = error.message;
       } else if (error.response?.data?.message) {
@@ -83,15 +112,19 @@ export const loginMutationFn = async (
       } else if (error.response?.statusText) {
         errorObj.message = error.response.statusText;
       }
+
+      // Specific error messages for common deployment issues
+      if (error.code === 'ERR_NETWORK') {
+        errorObj.message = "Network error: Unable to connect to the server. Please check your connection.";
+      } else if (error.message?.includes('CORS')) {
+        errorObj.message = "Cross-origin request blocked. Please contact support.";
+      } else if (!error.response && error.request) {
+        errorObj.message = "Server is not responding. Please try again later.";
+      } else if (!error.response && !error.request) {
+        errorObj.message = "Request configuration error. Please refresh and try again.";
+      }
     } else if (typeof error === "string") {
       errorObj.message = error;
-    }
-
-    // Network or deployment specific error handling
-    if (!error.response && error.request) {
-      errorObj.message = "Network error: Unable to connect to server";
-    } else if (!error.response && !error.request) {
-      errorObj.message = "Request setup error";
     }
 
     throw errorObj;
