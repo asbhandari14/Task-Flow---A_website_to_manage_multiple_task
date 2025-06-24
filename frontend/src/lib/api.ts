@@ -45,20 +45,22 @@ export const loginMutationFn = async (
     }
     
     return response.data;
-  } catch (error:any) {
+  } catch (error: any) {
     console.error("Login API error:", error);
-    
-    // Log more details about the error
-    if (error?.response) {
-      console.error("Error response:", error?.response.status, error.response.data);
-    } else if (error.request) {
-      console.error("No response received:", error.request);
+
+    // Always throw an error object with a response property (can be undefined)
+    if (error && typeof error === "object") {
+      throw {
+        response: error.response ?? undefined,
+        request: error.request ?? undefined,
+        message: error.message ?? "Unknown error"
+      };
     } else {
-      console.error("Request setup error:", error.message);
+      throw {
+        response: undefined,
+        message: typeof error === "string" ? error : "Unknown error"
+      };
     }
-    
-    // Re-throw the error so your calling code can handle it
-    throw error;
   }
 };
 
