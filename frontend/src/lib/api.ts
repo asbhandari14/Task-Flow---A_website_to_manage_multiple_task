@@ -26,6 +26,10 @@ import {
   EditWorkspaceType,
 } from "@/types/api.type";
 
+
+
+
+
 export const loginMutationFn = async (
   data: loginType
 ): Promise<LoginResponseType> => {
@@ -48,21 +52,53 @@ export const loginMutationFn = async (
   } catch (error: any) {
     console.error("Login API error:", error);
 
-    // Always throw an error object with a response property (can be undefined)
+    // Create a standardized error object
+    const errorObj = {
+      response: undefined as any,
+      request: undefined as any,
+      message: "Unknown error"
+    };
+
+    // Safely extract error information
     if (error && typeof error === "object") {
-      throw {
-        response: error.response ?? undefined,
-        request: error.request ?? undefined,
-        message: error.message ?? "Unknown error"
-      };
-    } else {
-      throw {
-        response: undefined,
-        message: typeof error === "string" ? error : "Unknown error"
-      };
+      // Check if error.response exists and has data
+      if (error.response) {
+        errorObj.response = {
+          status: error.response.status,
+          statusText: error.response.statusText,
+          data: error.response.data || { message: "Server error occurred" }
+        };
+      }
+      
+      // Set request if available
+      if (error.request) {
+        errorObj.request = error.request;
+      }
+      
+      // Set message
+      if (error.message) {
+        errorObj.message = error.message;
+      } else if (error.response?.data?.message) {
+        errorObj.message = error.response.data.message;
+      } else if (error.response?.statusText) {
+        errorObj.message = error.response.statusText;
+      }
+    } else if (typeof error === "string") {
+      errorObj.message = error;
     }
+
+    // Network or deployment specific error handling
+    if (!error.response && error.request) {
+      errorObj.message = "Network error: Unable to connect to server";
+    } else if (!error.response && !error.request) {
+      errorObj.message = "Request setup error";
+    }
+
+    throw errorObj;
   }
 };
+
+
 
 
 
