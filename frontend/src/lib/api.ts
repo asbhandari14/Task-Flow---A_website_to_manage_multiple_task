@@ -107,22 +107,20 @@ export const loginMutationFn = async (
   } catch (error: any) {
     console.error("Login API error:", error);
 
-    if (error && error.code === 'ERR_NETWORK' || 
-        (error.message && error.message.includes('CORS')) ||
-        (error.message && error.message.includes('credentials')) ||
-        (!error.response && !error.request)) {
-      
+    if (
+      (error && error.code === 'ERR_NETWORK') || 
+      (error.message && error.message.includes('CORS')) ||
+      (error.message && error.message.includes('credentials')) ||
+      (!error.response && !error.request)
+    ) {
       console.log("Retrying login without credentials due to CORS/network issue");
-      
       try {
         const retryResponse = await API.post("/auth/login", data, {
           headers: {"Content-Type": "application/json"}
         });
-        
         if (!retryResponse || !retryResponse.data) {
           throw new Error("Invalid response from login API on retry");
         }
-        
         return retryResponse.data;
       } catch (retryError: any) {
         console.error("Login retry also failed:", retryError);
@@ -130,8 +128,12 @@ export const loginMutationFn = async (
       }
     }
 
-    handleApiError(error, "Login");
-    // Add a return statement to satisfy the return type
+    // Safely handle error object and avoid destructuring if undefined
+    if (error && error.response && error.response.data) {
+      handleApiError(error, "Login");
+    } else {
+      handleApiError({ message: error?.message || "Unknown login error" }, "Login");
+    }
     throw error; // This line will never be reached, but is required for type safety
   }
 };
@@ -150,6 +152,7 @@ export const registerMutationFn = async (data: registerType): Promise<any> => {
     return response.data;
   } catch (error: any) {
     handleApiError(error, "Register");
+    throw error; // Ensure the error is always thrown for the caller to handle
   }
 };
 
