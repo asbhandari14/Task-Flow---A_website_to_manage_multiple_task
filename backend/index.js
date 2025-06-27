@@ -16,25 +16,15 @@ import workspaceRoutes from './routes/workspace.route.js';
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-const allowedOrigins = [
-  process.env.FRONTEND_ORIGIN, // should be: https://task-flow-a-website-to-manage-multi-phi.vercel.app
-  'http://localhost:5173'
-];
-
 app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      console.log("CORS blocked origin:", origin); // Add this for debugging
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
+  origin: ["https://task-flow-a-website-to-manage-multi-phi.vercel.app"],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
+
+console.log("Allowed origin:", process.env.FRONTEND_ORIGIN);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
