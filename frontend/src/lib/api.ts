@@ -18,6 +18,74 @@ type ApiError = {
   code?: string;
 };
 
+// --- LOGOUT MUTATION FN ---
+export const logoutMutationFn = async (): Promise<any> => {
+  try {
+    const response = await API.post("/auth/logout");
+    return response.data;
+  } catch (error: any) {
+    handleApiError(error, "Logout");
+  }
+};
+
+// --- DELETE PROJECT MUTATION FN ---
+export const deleteProjectMutationFn = async ({
+  workspaceId,
+  projectId,
+}: {
+  workspaceId: string;
+  projectId: string;
+}): Promise<any> => {
+  try {
+    const response = await API.delete(`/workspaces/${workspaceId}/projects/${projectId}`);
+    return response.data;
+  } catch (error: any) {
+    handleApiError(error, "DeleteProject");
+  }
+};
+
+// --- GET ALL WORKSPACES USER IS MEMBER QUERY FN ---
+export const getAllWorkspacesUserIsMemberQueryFn = async (): Promise<any> => {
+  try {
+    const response = await API.get("/workspaces");
+    return response.data;
+  } catch (error: any) {
+    handleApiError(error, "GetAllWorkspacesUserIsMember");
+  }
+};
+
+// --- CREATE WORKSPACE MUTATION FN ---
+export const createWorkspaceMutationFn = async ({
+  name,
+  description,
+}: {
+  name: string;
+  description: string;
+}): Promise<any> => {
+  try {
+    const response = await API.post("/workspaces", { name, description });
+    return response.data;
+  } catch (error: any) {
+    handleApiError(error, "CreateWorkspace");
+  }
+};
+
+// --- EDIT WORKSPACE MUTATION FN ---
+export const editWorkspaceMutationFn = async ({
+  workspaceId,
+  data,
+}: {
+  workspaceId: string;
+  data: { name: string; description: string };
+}): Promise<any> => {
+  try {
+    const response = await API.put(`/workspaces/${workspaceId}`, data);
+    return response.data;
+  } catch (error: any) {
+    handleApiError(error, "EditWorkspace");
+  }
+};
+
 const handleApiError = (error: any, functionName: string): never => {
   console.error(`${functionName} error:`, error);
 
